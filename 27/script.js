@@ -55,17 +55,17 @@
 // 3 Конструктор (new) - this == новый созданный объект
 
 // 4 Указание конкретного контекста - call, apply, bind
-// let user = {
-//     name: "john"
-// };
+let user = {
+    name: "john"
+};
 
-// function sayName(surname) {
-//     console.log(this);
-//     console.log(this.name + surname);
-// }
+function sayName(surname) {
+    console.log(this);
+    console.log(this.name + surname);
+}
 
-// console.log(sayName.call(user, "Smith"));
-// console.log(sayName.apply(user, ["Snow"]));
+console.log(sayName.call(user, "Smith"));
+console.log(sayName.apply(user, ["Snow"]));
 
 // function count(number) {
 //     return this * number;
@@ -76,14 +76,14 @@
 // console.log(double(10));
 
 // 5 
-let btn = document.querySelector("button");
+// let btn = document.querySelector("button");
 
-btn.addEventListener("click", function() {
-    console.log(this);
-    this.style.backgroundColor = "red";
+// btn.addEventListener("click", function() {
+//     console.log(this);
+//     this.style.backgroundColor = "red";
 
-    function showThis() {
-        console.log(this);
-    }
-    showThis();
-});
+//     function showThis() {
+//         console.log(this);
+//     }
+//     showThis();
+// });
