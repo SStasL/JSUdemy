@@ -1,4 +1,4 @@
-window.addEventListener("DOMContentLoaded", function () {
+window.addEventListener("DOMContentLoaded", function() {
     "use strict";
 
     let tab = document.querySelectorAll(".info-header-tab"),
@@ -20,7 +20,7 @@ window.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    info.addEventListener("click", function (event) {
+    info.addEventListener("click", function(event) {
         let target = event.target;
         if (target && target.classList.contains("info-header-tab")) {
             for (let i = 0; i < tab.length; i++) {
@@ -92,13 +92,13 @@ window.addEventListener("DOMContentLoaded", function () {
         overlay = document.querySelector(".overlay"),
         close = document.querySelector(".popup-close");
 
-    more.addEventListener("click", function () {
+    more.addEventListener("click", function() {
         overlay.style.display = "block";
         this.classList.add("more-splash");
         document.body.style.overflow = "hidden";
     });
 
-    close.addEventListener("click", function () {
+    close.addEventListener("click", function() {
         overlay.style.display = "none";
         more.classList.remove("more-splash");
         document.body.style.overflow = "";
@@ -116,41 +116,50 @@ window.addEventListener("DOMContentLoaded", function () {
         input = form.getElementsByTagName("input"),
         statusMessage = document.createElement("div");
 
-        statusMessage.classList.add("status");
+    statusMessage.classList.add("status");
 
-    form.addEventListener("submit", function(event) {
-        event.preventDefault();
-        form.appendChild(statusMessage);
+    function sendForm(elem) {
+        elem.addEventListener("submit", function(event) {
+            event.preventDefault();
+            elem.appendChild(statusMessage);
+            let formData = new FormData(elem);
 
-        let request = new XMLHttpRequest();
-        request.open("POST", "server.php");
-        // request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        request.setRequestHeader("Content-Type", "application/json; charset=utf-8");
+            function postData(data) {
+                return new Promise(function(resolve, reject) {
+                    let request = new XMLHttpRequest();
 
-        let formData = new FormData(form);
+                    request.open("POST", "server.php");
 
-        let obj = {};
-        formData.forEach(function(value, key) {
-            obj[key] = value;
-        });
+                    request.setRequestHeader("Content-Type", "application/json; charset=utf-8");
 
-        let json = JSON.stringify(obj);
-
-        // request.send(formData);
-        request.send(json);
-
-        request.addEventListener("readystatechange", function(){
-            if (request.readyState < 4) {
-                statusMessage.innerHTML = message.loading;
-            } else if (request.readyState === 4 && request.status == 200) {
-                statusMessage.innerHTML = message.success;
-            } else {
-                statusMessage.innerHTML = message.failure;
+                    request.onreadystatechange = function() {
+                        if (request.readyState < 4) {
+                            resolve()
+                        } else if (request.readyState === 4 && request.status == 200) {
+                            resolve()
+                        } else {
+                            reject()
+                        }
+                    }
+                    request.send(data);
+                })
             }
-        });
 
-        for (let i = 0; i < input.length; i++) {
-            input[i].value = "";
-        }
-    });
+            function clearInput() {
+                for (let i = 0; i < input.length; i++) {
+                    input[i].value = "";
+                }
+            }
+
+            postData(formData)
+                .then(() => statusMessage.innerHTML = message.loading)
+                .then(() => statusMessage.innerHTML = message.success)
+                .catch(() => statusMessage.innerHTML = message.failure)
+                .then(clearInput)
+
+
+        });
+    }
+
+    sendForm(form);
 });
